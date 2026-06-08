@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Hotel, KeyRound, Mail, ShieldCheck, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Hotel, KeyRound, Mail, ShieldCheck, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('owner@hotel.com');
   const [password, setPassword] = useState('demo1234');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isHydrated && user) router.replace('/dashboard');
@@ -140,13 +141,21 @@ export default function LoginPage() {
                     <div className="relative">
                       <KeyRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
-                        type="password"
-                        className="input pl-10"
+                        type={showPassword ? 'text' : 'password'}
+                        className="input pl-10 pr-10"
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
                     </div>
                   </div>
 
