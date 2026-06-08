@@ -1,1 +1,25 @@
+# dependencies
 node_modules
+
+# Next.js build output
+.next
+out
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# env files (local/private)
+.env*.local
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
