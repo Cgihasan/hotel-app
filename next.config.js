@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  basePath: '/hotel-app',
   reactStrictMode: true,
   images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: '**' },
-    ],
+    unoptimized: true,
   },
 };
 

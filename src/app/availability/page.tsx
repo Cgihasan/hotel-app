@@ -121,15 +121,15 @@ function AvailabilityContent() {
             </div>
           </div>
 
-          <div>
+          <div className="flex-1">
             <label className="label">Type</label>
-            <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50/50 p-1 dark:border-slate-800 dark:bg-slate-900/40">
+            <div className="flex w-full items-center gap-1 rounded-xl border border-slate-200 bg-slate-50/50 p-1 dark:border-slate-800 dark:bg-slate-900/40">
               {(['all', 'family', 'duplex'] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setType(t)}
                   className={cn(
-                    'rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition',
+                    'flex-1 rounded-lg px-2 py-1.5 text-xs font-semibold capitalize transition',
                     type === t
                       ? 'bg-white text-brand-700 shadow-soft dark:bg-slate-800 dark:text-brand-200'
                       : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200',
