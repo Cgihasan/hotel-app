@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface AppShellProps {
   title: string;
@@ -25,6 +27,26 @@ export function AppShell({ title, subtitle, rightSlot, children }: AppShellProps
         >
           {children}
         </motion.main>
+
+        {/* Mobile FAB */}
+        {rightSlot && (
+          <div className="fixed bottom-6 right-6 z-30 md:hidden">
+            {React.isValidElement(rightSlot) ? (
+              React.cloneElement(rightSlot as React.ReactElement<any>, {
+                size: 'lg',
+                className: cn(
+                  'h-14 w-14 rounded-full shadow-2xl p-0 flex items-center justify-center',
+                  (rightSlot.props as any).className,
+                ),
+                // To keep it icon-only, we check for leftIcon and use it as the only child.
+                children: (rightSlot.props as any).leftIcon || rightSlot.props.children,
+                leftIcon: null,
+              })
+            ) : (
+              rightSlot
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
