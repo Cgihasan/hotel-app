@@ -7,6 +7,17 @@ const AUTH_KEY = 'hr.auth';
 
 const isBrowser = typeof window !== 'undefined';
 
+function inferFloor(roomNumber: string): string {
+  const match = roomNumber.match(/^(\d)/);
+  if (!match) return 'Ground Floor';
+  const digit = parseInt(match[1], 10);
+  if (digit === 0) return 'Ground Floor';
+  if (digit === 1) return '1st Floor';
+  if (digit === 2) return '2nd Floor';
+  if (digit === 3) return '3rd Floor';
+  return `${digit}th Floor`;
+}
+
 export function loadRooms(): Room[] {
   if (!isBrowser) return [];
   try {
@@ -16,7 +27,12 @@ export function loadRooms(): Room[] {
       window.localStorage.setItem(ROOMS_KEY, JSON.stringify(seeded));
       return seeded;
     }
-    return JSON.parse(raw) as Room[];
+    const rooms = JSON.parse(raw) as Room[];
+    const migrated = rooms.map((r) =>
+      r.floor ? r : { ...r, floor: inferFloor(r.number) },
+    );
+    window.localStorage.setItem(ROOMS_KEY, JSON.stringify(migrated));
+    return migrated;
   } catch {
     return seedRooms();
   }

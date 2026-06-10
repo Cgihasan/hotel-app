@@ -190,6 +190,7 @@ function RoomsContent() {
                             {r.number}
                           </p>
                           <p className="mt-0.5 text-sm capitalize text-slate-500">{r.type}</p>
+
                         </div>
                         <button
                           onClick={() => toggleRoomActive(r.id)}
