@@ -94,6 +94,7 @@
     @apply transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40;
   }
 
+  /* Legacy .scrollbar-thin class — kept for backward compat */
   .scrollbar-thin::-webkit-scrollbar {
     height: 8px;
     width: 8px;
@@ -101,6 +102,54 @@
   .scrollbar-thin::-webkit-scrollbar-thumb {
     @apply rounded-full bg-slate-300/70 dark:bg-slate-700/70;
   }
+}
+
+/* ============================================
+   Global themed scrollbars
+   ============================================ */
+
+/* Firefox — scrollbar-width & scrollbar-color cascade naturally */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / 0.6) transparent;
+}
+html.dark * {
+  scrollbar-color: rgb(71 85 105 / 0.6) transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) — must target * because pseudo-elements don't cascade */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(148 163 184);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(100 116 139);
+}
+*::-webkit-scrollbar-thumb:active {
+  background-color: rgb(71 85 105);
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* WebKit dark mode overrides */
+html.dark *::-webkit-scrollbar-thumb {
+  background-color: rgb(51 65 85);
+}
+html.dark *::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(71 85 105);
+}
+html.dark *::-webkit-scrollbar-thumb:active {
+  background-color: rgb(100 116 139);
 }
 
 /* React DatePicker custom theme */
