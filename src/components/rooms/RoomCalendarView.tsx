@@ -194,8 +194,6 @@ export function RoomCalendarView() {
                             const duration = differenceInDays(displayEnd, displayStart);
 
                             const isStartingThisMonth = checkInDate >= monthStart;
-                            const dayWidth = 48; // sm:w-12
-                            const dayWidthMobile = 40; // w-10
 
                             return (
                                 <div

@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BedDouble, Plus, Search, Pencil, Trash2, Users, Sparkles, LayoutGrid, Calendar } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { BedDouble, Plus, Search, Pencil, Trash2, Users, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { AppShell } from '@/components/layout/AppShell';
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { RoomForm } from '@/components/forms/RoomForm';
 import { RoomCalendarView } from '@/components/rooms/RoomCalendarView';
+import { ViewToggle, type ViewType } from '@/components/ui/ViewToggle';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useData } from '@/context/DataContext';
 import { formatCurrency, cn } from '@/lib/utils';
@@ -34,7 +35,7 @@ function RoomsContent() {
   const { rooms, reservations, toggleRoomActive, deleteRoom } = useData();
   const [search, setSearch] = useState('');
   const [type, setType] = useState<'all' | RoomType>('all');
-  const [view, setView] = useState<'grid' | 'calendar'>('grid');
+  const [view, setView] = useState<ViewType>('grid');
   const [modalState, setModalState] = useState<
     | { kind: 'closed' }
     | { kind: 'create' }
@@ -70,32 +71,7 @@ function RoomsContent() {
       subtitle="Curate the rooms available across your property."
       rightSlot={
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-            <button
-              onClick={() => setView('grid')}
-              className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-lg transition',
-                view === 'grid'
-                  ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300'
-                  : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
-              )}
-              title="Grid view"
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setView('calendar')}
-              className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-lg transition',
-                view === 'calendar'
-                  ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300'
-                  : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
-              )}
-              title="Calendar view"
-            >
-              <Calendar className="h-4 w-4" />
-            </button>
-          </div>
+          <ViewToggle view={view} onViewChange={setView} />
           <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setModalState({ kind: 'create' })}>
             Add room
           </Button>

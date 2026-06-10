@@ -12,9 +12,11 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ReservationForm } from '@/components/forms/ReservationForm';
+import { RoomCalendarView } from '@/components/rooms/RoomCalendarView';
+import { ViewToggle, type ViewType } from '@/components/ui/ViewToggle';
 import { useData } from '@/context/DataContext';
 import { useAuth } from '@/context/AuthContext';
-import { formatCurrency, formatDate, initialsOf } from '@/lib/utils';
+import { formatCurrency, formatDate, initialsOf, cn } from '@/lib/utils';
 import type { Reservation, ReservationStatus } from '@/types';
 import { DateRangeField } from '@/components/ui/DateRangeField';
 import { fromISODate, toISODate } from '@/lib/utils';
@@ -43,6 +45,7 @@ function ReservationsContent() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ReservationStatus>('all');
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [view, setView] = useState<ViewType>('table');
 
   const [modalState, setModalState] = useState<
     | { kind: 'closed' }
@@ -108,15 +111,18 @@ function ReservationsContent() {
           : 'View reservations and process check-ins and check-outs.'
       }
       rightSlot={
-        isOwner && (
-          <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setModalState({ kind: 'create' })}>
-            New reservation
-          </Button>
-        )
+        <div className="flex items-center gap-2">
+          <ViewToggle view={view} onViewChange={setView} options={['table', 'calendar']} />
+          {isOwner && (
+            <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setModalState({ kind: 'create' })}>
+              New reservation
+            </Button>
+          )}
+        </div>
       }
     >
       {/* Filters */}
-      <div className="card-elevated mb-6 p-4">
+      <div className={cn("card-elevated mb-6 p-4", view === 'calendar' && "hidden")}>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative flex-1 lg:max-w-sm">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -159,7 +165,16 @@ function ReservationsContent() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Content */}
+      {view === 'calendar' ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <RoomCalendarView />
+        </motion.div>
+      ) : (
       <div className="card-elevated overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-100 text-left text-sm dark:divide-slate-800">
@@ -320,6 +335,7 @@ function ReservationsContent() {
           </table>
         </div>
       </div>
+      )}
 
       <Modal
         open={modalState.kind === 'create'}
