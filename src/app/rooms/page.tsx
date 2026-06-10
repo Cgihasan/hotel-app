@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
-import { BedDouble, Plus, Search, Pencil, Trash2, Users, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BedDouble, Plus, Search, Pencil, Trash2, Users, Sparkles, LayoutGrid, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { AppShell } from '@/components/layout/AppShell';
@@ -10,11 +10,11 @@ import { RoleGuard } from '@/components/layout/RoleGuard';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { RoomForm } from '@/components/forms/RoomForm';
+import { RoomCalendarView } from '@/components/rooms/RoomCalendarView';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useData } from '@/context/DataContext';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, cn } from '@/lib/utils';
 import type { Room, RoomType } from '@/types';
-import { cn } from '@/lib/utils';
 
 const TYPE_FILTERS: { value: 'all' | RoomType; label: string }[] = [
   { value: 'all', label: 'All' },
@@ -34,6 +34,7 @@ function RoomsContent() {
   const { rooms, reservations, toggleRoomActive, deleteRoom } = useData();
   const [search, setSearch] = useState('');
   const [type, setType] = useState<'all' | RoomType>('all');
+  const [view, setView] = useState<'grid' | 'calendar'>('grid');
   const [modalState, setModalState] = useState<
     | { kind: 'closed' }
     | { kind: 'create' }
@@ -68,12 +69,40 @@ function RoomsContent() {
       title="Rooms"
       subtitle="Curate the rooms available across your property."
       rightSlot={
-        <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setModalState({ kind: 'create' })}>
-          Add room
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+            <button
+              onClick={() => setView('grid')}
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-lg transition',
+                view === 'grid'
+                  ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300'
+                  : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
+              )}
+              title="Grid view"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setView('calendar')}
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-lg transition',
+                view === 'calendar'
+                  ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300'
+                  : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
+              )}
+              title="Calendar view"
+            >
+              <Calendar className="h-4 w-4" />
+            </button>
+          </div>
+          <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setModalState({ kind: 'create' })}>
+            Add room
+          </Button>
+        </div>
       }
     >
-      <div className="card-elevated mb-6 p-4">
+      <div className={cn("card-elevated mb-6 p-4", view === 'calendar' && "hidden")}>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative flex-1 lg:max-w-sm">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -106,7 +135,15 @@ function RoomsContent() {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {view === 'calendar' ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <RoomCalendarView />
+        </motion.div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={BedDouble}
           title="No rooms yet"
