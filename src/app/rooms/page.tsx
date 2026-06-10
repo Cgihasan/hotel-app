@@ -52,6 +52,32 @@ function RoomsContent() {
     });
   }, [rooms, type, search]);
 
+  const roomsByFloor = useMemo(() => {
+    const grouped: Record<string, Room[]> = {};
+    filtered.forEach((r) => {
+      const floor = r.floor || 'Other';
+      if (!grouped[floor]) grouped[floor] = [];
+      grouped[floor].push(r);
+    });
+
+    const floorOrder = (a: string, b: string) => {
+      const getRank = (name: string) => {
+        const lower = name.toLowerCase();
+        if (lower.includes('ground')) return 0;
+        const match = lower.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 999;
+      };
+      return getRank(a) - getRank(b);
+    };
+
+    return Object.keys(grouped)
+      .sort(floorOrder)
+      .reduce((acc, floor) => {
+        acc[floor] = grouped[floor];
+        return acc;
+      }, {} as Record<string, Room[]>);
+  }, [filtered]);
+
   const onDelete = (r: Room) => {
     const hasReservations = reservations.some(
       (res) => res.roomId === r.id && (res.status === 'confirmed' || res.status === 'checked-in'),
@@ -131,105 +157,118 @@ function RoomsContent() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((r, idx) => {
-            const activeReservations = reservations.filter(
-              (res) => res.roomId === r.id && (res.status === 'confirmed' || res.status === 'checked-in'),
-            ).length;
-            return (
-              <motion.div
-                key={r.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(idx * 0.04, 0.3) }}
-                whileHover={{ y: -3 }}
-                className="card-elevated overflow-hidden p-5"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                      Room
-                    </p>
-                    <p className="font-display text-3xl font-extrabold tracking-tight">
-                      {r.number}
-                    </p>
-                    <p className="mt-0.5 text-sm capitalize text-slate-500">{r.type}</p>
-                  </div>
-                  <button
-                    onClick={() => toggleRoomActive(r.id)}
-                    className={cn(
-                      'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition',
-                      r.isActive
-                        ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-200 dark:ring-emerald-900/50'
-                        : 'bg-slate-100 text-slate-500 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700',
-                    )}
-                    title="Toggle active"
-                  >
-                    <span
-                      className={cn(
-                        'h-1.5 w-1.5 rounded-full',
-                        r.isActive ? 'bg-emerald-500' : 'bg-slate-400',
-                      )}
-                    />
-                    {r.isActive ? 'Active' : 'Inactive'}
-                  </button>
-                </div>
-
-                <div className="mt-4 flex items-center gap-4 text-sm text-slate-600 dark:text-slate-300">
-                  <div className="flex items-center gap-1.5">
-                    <Users className="h-4 w-4 text-slate-400" /> {r.capacity} guests
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="h-4 w-4 text-slate-400" /> {r.amenities.length} amenities
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {r.amenities.slice(0, 4).map((a) => (
-                    <span
-                      key={a}
-                      className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+        <div className="space-y-10">
+          {Object.entries(roomsByFloor).map(([floor, floorRooms]) => (
+            <div key={floor}>
+              <div className="mb-4 flex items-center gap-2">
+                <div className="h-6 w-1 rounded-full bg-brand-500" />
+                <h3 className="text-lg font-bold tracking-tight text-slate-800 dark:text-slate-100">{floor}</h3>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                  {floorRooms.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {floorRooms.map((r, idx) => {
+                  const activeReservations = reservations.filter(
+                    (res) => res.roomId === r.id && (res.status === 'confirmed' || res.status === 'checked-in'),
+                  ).length;
+                  return (
+                    <motion.div
+                      key={r.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: Math.min(idx * 0.04, 0.3) }}
+                      whileHover={{ y: -3 }}
+                      className="card-elevated overflow-hidden p-5"
                     >
-                      {a}
-                    </span>
-                  ))}
-                  {r.amenities.length > 4 && (
-                    <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-semibold text-brand-700 dark:bg-brand-950/40 dark:text-brand-200">
-                      +{r.amenities.length - 4}
-                    </span>
-                  )}
-                </div>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Room
+                          </p>
+                          <p className="font-display text-3xl font-extrabold tracking-tight">
+                            {r.number}
+                          </p>
+                          <p className="mt-0.5 text-sm capitalize text-slate-500">{r.type}</p>
+                        </div>
+                        <button
+                          onClick={() => toggleRoomActive(r.id)}
+                          className={cn(
+                            'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition',
+                            r.isActive
+                              ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-200 dark:ring-emerald-900/50'
+                              : 'bg-slate-100 text-slate-500 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700',
+                          )}
+                          title="Toggle active"
+                        >
+                          <span
+                            className={cn(
+                              'h-1.5 w-1.5 rounded-full',
+                              r.isActive ? 'bg-emerald-500' : 'bg-slate-400',
+                            )}
+                          />
+                          {r.isActive ? 'Active' : 'Inactive'}
+                        </button>
+                      </div>
 
-                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
-                  <div>
-                    <p className="font-display text-2xl font-extrabold text-slate-900 dark:text-white">
-                      {formatCurrency(r.pricePerNight)}
-                    </p>
-                    <p className="text-[11px] text-slate-500">per night · {activeReservations} active booking(s)</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setModalState({ kind: 'edit', room: r })}
-                      leftIcon={<Pencil className="h-3.5 w-3.5" />}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onDelete(r)}
-                      leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-                      className="text-rose-600 hover:bg-rose-50"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                      <div className="mt-4 flex items-center gap-4 text-sm text-slate-600 dark:text-slate-300">
+                        <div className="flex items-center gap-1.5">
+                          <Users className="h-4 w-4 text-slate-400" /> {r.capacity} guests
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles className="h-4 w-4 text-slate-400" /> {r.amenities.length} amenities
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {r.amenities.slice(0, 4).map((a) => (
+                          <span
+                            key={a}
+                            className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                          >
+                            {a}
+                          </span>
+                        ))}
+                        {r.amenities.length > 4 && (
+                          <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-semibold text-brand-700 dark:bg-brand-950/40 dark:text-brand-200">
+                            +{r.amenities.length - 4}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
+                        <div>
+                          <p className="font-display text-2xl font-extrabold text-slate-900 dark:text-white">
+                            {formatCurrency(r.pricePerNight)}
+                          </p>
+                          <p className="text-[11px] text-slate-500">per night · {activeReservations} active booking(s)</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setModalState({ kind: 'edit', room: r })}
+                            leftIcon={<Pencil className="h-3.5 w-3.5" />}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onDelete(r)}
+                            leftIcon={<Trash2 className="h-3.5 w-3.5" />}
+                            className="text-rose-600 hover:bg-rose-50"
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

@@ -8,6 +8,7 @@ export interface Room {
   pricePerNight: number;
   amenities: string[];
   isActive: boolean;
+  floor: string;
 }
 
 export type ReservationStatus = 'confirmed' | 'checked-in' | 'checked-out' | 'cancelled';

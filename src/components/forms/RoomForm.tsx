@@ -36,6 +36,7 @@ const emptyRoom: Omit<Room, 'id'> = {
   pricePerNight: 2500,
   amenities: ['Wi-Fi', 'TV', 'Air conditioning'],
   isActive: true,
+  floor: 'Ground Floor',
 };
 
 export function RoomForm({ initial, onClose, onSaved }: RoomFormProps) {
@@ -91,6 +92,16 @@ export function RoomForm({ initial, onClose, onSaved }: RoomFormProps) {
             value={form.number}
             onChange={(e) => set('number', e.target.value)}
             placeholder="e.g. 205"
+            required
+          />
+        </div>
+        <div>
+          <label className="label">Floor</label>
+          <input
+            className="input"
+            value={form.floor}
+            onChange={(e) => set('floor', e.target.value)}
+            placeholder="e.g. Ground Floor"
             required
           />
         </div>

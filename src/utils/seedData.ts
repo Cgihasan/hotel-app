@@ -19,6 +19,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 2500,
       amenities: ['Wi-Fi', 'TV', 'Air conditioning'],
       isActive: true,
+      floor: 'Ground Floor',
     },
     {
       id: 'room-002',
@@ -28,6 +29,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 2500,
       amenities: ['Wi-Fi', 'TV', 'Air conditioning', 'Coffee maker'],
       isActive: true,
+      floor: 'Ground Floor',
     },
     {
       id: 'room-003',
@@ -37,6 +39,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 2500,
       amenities: ['Wi-Fi', 'TV', 'Air conditioning'],
       isActive: true,
+      floor: 'Ground Floor',
     },
     {
       id: 'room-004',
@@ -46,6 +49,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 2500,
       amenities: ['Wi-Fi', 'TV', 'Air conditioning', 'Coffee maker'],
       isActive: true,
+      floor: 'Ground Floor',
     },
     {
       id: 'room-005',
@@ -55,6 +59,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 2500,
       amenities: ['Wi-Fi', 'TV', 'Air conditioning'],
       isActive: true,
+      floor: 'Ground Floor',
     },
     {
       id: 'room-006',
@@ -64,6 +69,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 2500,
       amenities: ['Wi-Fi', 'TV', 'Air conditioning', 'Coffee maker'],
       isActive: true,
+      floor: 'Ground Floor',
     },
     // 1st floor — 5 rooms
     {
@@ -74,6 +80,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 4000,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Balcony'],
       isActive: true,
+      floor: '1st Floor',
     },
     {
       id: 'room-102',
@@ -83,6 +90,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 4000,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Workspace'],
       isActive: true,
+      floor: '1st Floor',
     },
     {
       id: 'room-103',
@@ -92,6 +100,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 4000,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Balcony'],
       isActive: true,
+      floor: '1st Floor',
     },
     {
       id: 'room-104',
@@ -101,6 +110,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 4000,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Workspace'],
       isActive: true,
+      floor: '1st Floor',
     },
     {
       id: 'room-105',
@@ -110,6 +120,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 4000,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Balcony'],
       isActive: true,
+      floor: '1st Floor',
     },
     // 2nd floor — 5 rooms
     {
@@ -120,6 +131,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 3500,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Balcony', 'Workspace'],
       isActive: true,
+      floor: '2nd Floor',
     },
     {
       id: 'room-202',
@@ -129,6 +141,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 5500,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Living room', 'Balcony'],
       isActive: true,
+      floor: '2nd Floor',
     },
     {
       id: 'room-203',
@@ -138,6 +151,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 3500,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Workspace', 'Balcony'],
       isActive: true,
+      floor: '2nd Floor',
     },
     {
       id: 'room-204',
@@ -147,6 +161,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 5500,
       amenities: ['Wi-Fi', 'Smart TV', 'Mini bar', 'Living room', 'Kitchen'],
       isActive: true,
+      floor: '2nd Floor',
     },
     {
       id: 'room-205',
@@ -156,6 +171,7 @@ export function seedRooms(): Room[] {
       pricePerNight: 7500,
       amenities: ['Wi-Fi', 'Smart TV', 'Jacuzzi', 'Living room', 'Kitchen', 'Balcony', 'Workspace'],
       isActive: true,
+      floor: '2nd Floor',
     },
   ];
 }

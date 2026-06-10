@@ -33,13 +33,30 @@ export function RoomCalendarView() {
     return eachDayOfInterval({ start: monthStart, end: monthEnd });
   }, [monthStart, monthEnd]);
 
-  const roomsByType = useMemo(() => {
+  const roomsByFloor = useMemo(() => {
     const grouped: Record<string, Room[]> = {};
     rooms.forEach(room => {
-      if (!grouped[room.type]) grouped[room.type] = [];
-      grouped[room.type].push(room);
+      const floor = room.floor || 'Other';
+      if (!grouped[floor]) grouped[floor] = [];
+      grouped[floor].push(room);
     });
-    return grouped;
+
+    const floorOrder = (a: string, b: string) => {
+      const getRank = (name: string) => {
+        const lower = name.toLowerCase();
+        if (lower.includes('ground')) return 0;
+        const match = lower.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 999;
+      };
+      return getRank(a) - getRank(b);
+    };
+
+    return Object.keys(grouped)
+      .sort(floorOrder)
+      .reduce((acc, floor) => {
+        acc[floor] = grouped[floor];
+        return acc;
+      }, {} as Record<string, Room[]>);
   }, [rooms]);
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
@@ -149,14 +166,14 @@ export function RoomCalendarView() {
           </div>
 
           {/* Room Rows */}
-          {Object.entries(roomsByType).map(([type, rooms]) => (
-            <div key={type}>
-              {/* Type Header Row */}
+          {Object.entries(roomsByFloor).map(([floor, rooms]) => (
+            <div key={floor}>
+              {/* Floor Header Row */}
               <div className="flex bg-slate-50 dark:bg-slate-800/30 border-b border-slate-200 dark:border-slate-800">
                 <div className="w-32 sm:w-48 p-2 border-r border-slate-200 dark:border-slate-800 flex items-center gap-2 sticky left-0 z-20 bg-slate-50 dark:bg-slate-800">
                   <div className="w-2 h-2 sm:w-3 sm:h-3 flex items-center justify-center text-[8px] sm:text-[10px] text-slate-400">▼</div>
                   <span className="text-[8px] sm:text-[10px] font-extrabold uppercase tracking-widest text-brand-700 dark:text-brand-400">
-                    {type} ({rooms.length})
+                    {floor} ({rooms.length})
                   </span>
                 </div>
                 {days.map(day => (
